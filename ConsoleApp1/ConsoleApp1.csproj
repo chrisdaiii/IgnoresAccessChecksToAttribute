@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ClassLibrary1\ClassLibrary1.csproj" />
+	</ItemGroup>
+
+	<UsingTask TaskName="ClassLibrary1.PublicizeInternals"
+			   AssemblyFile="..\ClassLibrary1\bin\Debug\netstandard2.0\ClassLibrary1.dll" />
+
+	<Target Name="GenerateAssembly" AfterTargets="AfterResolveReferences">
+		<PublicizeInternals SourceReferences="@(ReferencePath)"
+							AssemblyName="ClassLibrary1"
+							IntermediateOutputPath="$(IntermediateOutputPath)">
+			<Output TaskParameter="GeneratedReference" ItemName="ReferencePath" />
+		</PublicizeInternals>
+	</Target>
+</Project>
