@@ -1,6 +1,6 @@
 此仓库参考 [IgnoresAccessChecksToGenerator](https://github.com/aelij/IgnoresAccessChecksToGenerator) 自己动手实践，帮助理解原理。
 
-1. 生成`IgnoresAccessChecksToAttribute`特性，命名空间为`System.Runtime.CompilerServices`，该特性只会在运行时会生效，在编译期间无效。
+1. 生成 `IgnoresAccessChecksToAttribute` 特性，命名空间为 `System.Runtime.CompilerServices`，该特性只会在运行时会生效，在编译期间无效。
 
    ```c#
    namespace System.Runtime.CompilerServices
@@ -18,14 +18,14 @@
    }
    ```
    
-2. 创建一个AssemblyInfo.cs文件或随便在一个地方应用`IgnoresAccessChecksToAttribute`特性，表示忽略对该程序集的访问修饰符检查。
+2. 创建一个AssemblyInfo.cs文件或随便在一个地方应用 `IgnoresAccessChecksToAttribute` 特性，表示忽略对该程序集的访问修饰符检查。
 
    ```c#
    [assembly: IgnoresAccessChecksTo("MyProject")]
    ```
    
-3. 生成一个新的 MyProject 程序集，将所有访问级别改为`public`。
-4. 将生成的新的程序集添加到当前项目中，需要在`AfterResolveReferences`Task之后，用于编译通过。
+3. 生成一个新的 MyProject 程序集，将所有访问级别改为 `public`。
+4. 将生成的新的程序集添加到当前项目中，需要在 `AfterResolveReferences` Task之后，用于编译通过。
    
    ```c#
    <ItemGroup>
