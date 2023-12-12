@@ -32,7 +32,7 @@
     <ReferencePath Include="新的程序集.dll" />
    </ItemGroup>
    ```
-5. 移除旧的程序集引用，用于消除IDE的语法错误提示和F12跳转到定义。
+5. 移除旧的程序集引用，用于消除IDE的诊断错误提示和F12跳转到定义。
 
    ```c#
    <ItemGroup>
