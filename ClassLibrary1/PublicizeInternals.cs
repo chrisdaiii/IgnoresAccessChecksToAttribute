@@ -8,10 +8,7 @@ namespace ClassLibrary1
     public class PublicizeInternals : Task
     {
         [Required]
-        public ITaskItem[] SourceReferences { get; set; }
-
-        [Required]
-        public string AssemblyName { get; set; }
+        public ITaskItem SourceReference { get; set; }
 
         [Required]
         public string IntermediateOutputPath { get; set; }
@@ -23,58 +20,53 @@ namespace ClassLibrary1
         {
             //System.Diagnostics.Debugger.Launch();
 
-            foreach (var reference in SourceReferences)
+            var assembly = AssemblyDefinition.ReadAssembly(SourceReference.ItemSpec);
+
+            foreach (var type in assembly.MainModule.GetTypes())
             {
-                if (reference.GetMetadata("FileName") == AssemblyName)
+                if (!type.IsNested && type.IsNotPublic)
                 {
-                    var assembly = AssemblyDefinition.ReadAssembly(reference.ToString());
+                    type.IsPublic = true;
+                }
+                else if (type.IsNested && type.IsNestedPublic)
+                {
+                    type.IsNestedPublic = true;
+                }
 
-                    foreach (var type in assembly.MainModule.GetTypes())
+                foreach (var field in type.Fields)
+                {
+                    if (!field.IsPublic)
                     {
-                        if (!type.IsNested && type.IsNotPublic)
-                        {
-                            type.IsPublic = true;
-                        }
-                        else if (type.IsNested && type.IsNestedPublic)
-                        {
-                            type.IsNestedPublic = true;
-                        }
-
-                        foreach (var field in type.Fields)
-                        {
-                            if (!field.IsPublic)
-                            {
-                                field.IsPublic = true;
-                            }
-                        }
-
-                        foreach (var method in type.Methods)
-                        {
-                            if (!method.IsPublic)
-                            {
-                                method.IsPublic = true;
-                            }
-                        }
+                        field.IsPublic = true;
                     }
+                }
 
-                    var dirPath = Path.Combine(Directory.GetCurrentDirectory(), IntermediateOutputPath, "Generated");
-
-                    if (!Directory.Exists(dirPath))
+                foreach (var method in type.Methods)
+                {
+                    if (!method.IsPublic)
                     {
-                        Directory.CreateDirectory(dirPath);
+                        method.IsPublic = true;
                     }
-
-                    var filePath = Path.Combine(dirPath, $"{AssemblyName}.dll");
-
-                    assembly.Write(filePath);
-
-                    GeneratedReference = new TaskItem(filePath);
-
-                    return true;
                 }
             }
 
-            return false;
+            var dirPath = Path.Combine(Directory.GetCurrentDirectory(), IntermediateOutputPath, "Generated");
+
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+
+            var filename = SourceReference.GetMetadata("Filename");
+            var extension = SourceReference.GetMetadata("Extension");
+
+            var filePath = Path.Combine(dirPath, $"{filename}{extension}");
+
+            assembly.Write(filePath);
+
+            GeneratedReference = new TaskItem(filePath);
+
+            return true;
         }
     }
 }
