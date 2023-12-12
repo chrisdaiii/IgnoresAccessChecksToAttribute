@@ -14,11 +14,22 @@
 	<UsingTask TaskName="ClassLibrary1.PublicizeInternals"
 			   AssemblyFile="..\ClassLibrary1\bin\Debug\netstandard2.0\ClassLibrary1.dll" />
 
-	<Target Name="GenerateAssembly" AfterTargets="AfterResolveReferences">
-		<PublicizeInternals SourceReferences="@(ReferencePath)"
-							AssemblyName="ClassLibrary1"
-							IntermediateOutputPath="$(IntermediateOutputPath)">
+	<Target Name="GenerateReference" AfterTargets="AfterResolveReferences">
+		<ItemGroup>
+			<SourceReference Include="@(ReferencePath)" Condition="'%(Filename)' == 'ClassLibrary1'" />
+		</ItemGroup>
+
+		<PublicizeInternals SourceReference="@(SourceReference)" IntermediateOutputPath="$(IntermediateOutputPath)">
 			<Output TaskParameter="GeneratedReference" ItemName="ReferencePath" />
 		</PublicizeInternals>
+
+		<ItemGroup>
+			<ReferencePath Remove="@(SourceReference)" />
+		</ItemGroup>
+
+		<Message Text="----------------------------------------------------------------------------------------------" Importance="high" />
+		<Message Text="%(ReferencePath.Identity)" Importance="high" />
+		<Message Text="----------------------------------------------------------------------------------------------" Importance="high" />
 	</Target>
+
 </Project>
