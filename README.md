@@ -29,7 +29,14 @@
    
    ```c#
    <ItemGroup>
-    <ReferencePath Include="第三步的路径.dll" />
+    <ReferencePath Include="新的程序集.dll" />
+   </ItemGroup>
+   ```
+5. 移除旧的程序集引用，用于消除编译器的语法错误提示和F12跳转到定义。
+
+   ```c#
+   <ItemGroup>
+    <ReferencePath Remove="旧的程序集.dll" />
    </ItemGroup>
    ```
 
